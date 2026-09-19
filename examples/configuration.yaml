@@ -1,0 +1,23 @@
+# In einen bestehenden template:-Abschnitt als weitere Listeneinträge einfügen.
+template:
+  - use_blueprint:
+      path: mercedes_leasing/restkilometer.yaml
+      input:
+        odometer: sensor.mein_auto_kilometerstand
+        start_km: 0
+    name: Mercedes Leasing restkilometer
+    unique_id: mercedes_leasing_restkilometer
+  - use_blueprint:
+      path: mercedes_leasing/bandbreite.yaml
+      input:
+        odometer: sensor.mein_auto_kilometerstand
+        start_km: 0
+    name: Mercedes Leasing bandbreite
+    unique_id: mercedes_leasing_bandbreite
+  - use_blueprint:
+      path: mercedes_leasing/nachzahlung.yaml
+      input:
+        odometer: sensor.mein_auto_kilometerstand
+        start_km: 0
+    name: Mercedes Leasing nachzahlung
+    unique_id: mercedes_leasing_nachzahlung

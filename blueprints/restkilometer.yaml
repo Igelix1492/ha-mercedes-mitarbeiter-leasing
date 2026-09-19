@@ -1,0 +1,46 @@
+blueprint:
+  name: "Mercedes Mitarbeiter-Leasing – Kilometer bis zum nächsten Bandwechsel"
+  source_url: https://github.com/Igelix1492/ha-mercedes-mitarbeiter-leasing/blob/main/blueprints/restkilometer.yaml
+  description: >
+    Inoffizielle Leasing-Information. Beispieltarif aus der ursprünglichen
+    Konfiguration; Gültigkeitsdatum unbekannt. README vor Verwendung lesen.
+  domain: template
+  author: Igelix1492
+  homeassistant:
+    min_version: "2026.9.0"
+  input:
+    odometer:
+      name: Kilometerstand-Sensor
+      description: Sensor mit Kilometerstand in km.
+      selector:
+        entity:
+          domain: sensor
+    start_km:
+      name: Kilometerstand bei Leasingbeginn
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 1000000
+          step: 0.1
+          mode: box
+          unit_of_measurement: km
+variables:
+  odometer: !input odometer
+  start_km: !input start_km
+sensor:
+  unit_of_measurement: "km"
+  availability: >-
+    {{ is_number(states(odometer)) and is_number(start_km)
+       and start_km | float(0) >= 0
+       and states(odometer) | float(0) >= start_km | float(0) }}
+  state: >-
+    {% set km = ((states(odometer) | float(0)) - (start_km | float(0))) | round(0, 'floor') | int %}
+    {% set limits = [9099,13099,17099,21099,22099,23099,24099,25099,26099,27099,28099,29099,30099,31099,32099,33099,34099,35099,36099,37099,38099] %}
+    {% set ns = namespace(value=none) %}
+    {% for limit in limits[:-1] %}
+      {% if km <= limit and ns.value is none %}
+        {% set ns.value = limit + 1 - km %}
+      {% endif %}
+    {% endfor %}
+    {{ ns.value }}

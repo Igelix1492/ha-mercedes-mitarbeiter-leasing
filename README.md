@@ -1,5 +1,13 @@
 # Mercedes Members Mitarbeiter Leasing Information
 
+[English](README.en.md)
+
+## Beispielansicht
+
+<img src="example-dashboard.png" alt="Mercedes-Leasing-Dashboard mit geschwärztem Kennzeichen" width="420">
+
+Anonymisierte, mit Bildbearbeitung aufbereitete Aufnahme des ursprünglichen Dashboards. Das Kennzeichen ist an allen drei Stellen verdeckt. Zusätzliche Fahrzeugwerte und Schalter gehören nicht zum Blueprint. Die ursprüngliche Anzeige zeigt 39 km bis zur oberen Bandgrenze; der korrigierte Blueprint zeigt bei 22.060 km **40 km bis zum Wechsel bei 22.100 km**.
+
 Inoffizielle Home-Assistant-Vorlagen für Restkilometer bis zum nächsten Bandwechsel, aktuelle Kilometerbandbreite und zugehörige Nachzahlung.
 
 ## Installation
@@ -16,7 +24,37 @@ Die drei Sensoren verwenden je einen Template-Blueprint. Die Einbindung erfolgt 
 Für weitere Fahrzeuge die Einträge mit anderen Namen und eindeutigen `unique_id`-Werten wiederholen.
 Vorhandene alte Sensoren erst nach Prüfung der neuen Werte ablösen; bestehende Dashboard-Referenzen gegebenenfalls anpassen.
 
+## Eindeutige IDs
+
+Die Beispielkonfiguration nutzt zufällig erzeugte UUIDv4-Werte als `unique_id`. Für jedes weitere Fahrzeug pro Sensor eine neue UUID erzeugen (z. B. `uuidgen` oder Python `uuid.uuid4()`) und dauerhaft beibehalten. Kopieren derselben UUID innerhalb einer HA-Instanz macht sie nicht erneut eindeutig. Auch eindeutige Text-IDs sind in HA gültig; UUIDs vermeiden unbeabsichtigte Namenskollisionen.
+
+**Bestehende Installationen:** Bisherige `unique_id` nicht einfach ersetzen. Eine andere ID erzeugt eine neue Entitätsidentität; Dashboard-Verweise und Historienzuordnung können betroffen sein.
+
+## Optional: alle Werte als ein Gerät
+
+YAML-Template-Sensoren unterstützen keinen `device:`-Block. [examples/mqtt-device.yaml](examples/mqtt-device.yaml) ergänzt deshalb drei MQTT-Sensoren mit demselben `device.identifiers`-Wert und einer Automation, die die Blueprint-Werte überträgt. Dadurch erscheinen die **drei MQTT-Sensoren unter einem Gerät**; die drei Template-Sensoren bleiben als Berechnungsquelle bestehen.
+
+Voraussetzungen: funktionierende MQTT-Integration mit Broker und die installierten Blueprint-Sensoren. Die drei Quell-Entitäts-IDs im Package müssen zu den tatsächlich angelegten HA-Entitäten passen.
+
+1. Datei unter `/config/packages/mercedes_leasing_mqtt.yaml` speichern.
+2. Packages in der bestehenden `homeassistant:`-Konfiguration aktivieren:
+   ```yaml
+   homeassistant:
+     packages: !include_dir_named packages
+   ```
+   Vorhandene `homeassistant:`-/`packages:`-Einträge zusammenführen, nicht doppelt anlegen.
+3. Konfiguration prüfen und HA neu starten.
+4. Unter Geräte & Dienste → MQTT das Gerät „Mercedes Mitarbeiter-Leasing“ öffnen.
+
+Die Automation sendet bei Änderungen, HA-Start und jede Minute. Ohne Nachrichten werden MQTT-Sensoren nach 180 Sekunden nicht verfügbar; ungültige oder unbekannte Zahlenwerte werden ebenfalls als nicht verfügbar gespiegelt. Nach einem Broker-Neustart wird innerhalb einer Minute erneut gesendet. Für weitere Fahrzeuge **alle UUIDs, das Topic und die drei Quell-Entitäten** ersetzen; innerhalb eines Fahrzeugs bleibt die Geräte-ID in allen drei Sensoren gleich (YAML-Anker).
+
+Zum Entfernen das MQTT-Package entfernen und HA neu starten; die Blueprint-Berechnung bleibt bestehen. Es werden keine Discovery-Konfigurationen und keine Zustände dauerhaft auf dem Broker gespeichert.
+
+Grundlagen: [Template-Blueprints](https://www.home-assistant.io/integrations/template/#using-blueprints), [MQTT-Geräte](https://www.home-assistant.io/integrations/sensor.mqtt/#device), [HA-Packages](https://www.home-assistant.io/docs/configuration/packages/).
+
 ## Berechnung und Grenzfälle
+
+
 
 Vertragskilometer = Kilometerstand minus Startwert, abgerundet auf volle Kilometer.
 Die Grenzen sind einschließlich. Bei 9.099 km bleiben 1 km bis 9.100 km; bei 9.100 km gilt die zweite Bandbreite und die Nachzahlung beträgt 240 EUR.

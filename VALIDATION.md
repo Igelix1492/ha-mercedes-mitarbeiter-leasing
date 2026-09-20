@@ -6,4 +6,6 @@ Am 19.09.2026 im Home-Assistant-Template-Editor geprüft:
 - Erkennung von unknown, unavailable, nan und inf: erfolgreich.
 
 Die Prüfung im Editor verwendete die Berechnungslogik mit synthetischen Werten. Die Blueprints wurden noch nicht als Entitäten installiert oder per HA-Konfigurationsprüfung validiert.
-Die beiliegenden Python-Regressionstests rendern die Templates aus den YAML-Dateien. Sie konnten lokal mangels Python-Laufzeit nicht ausgeführt werden; der GitHub-Actions-Workflow führt sie nach Veröffentlichung aus.
+Die Python-Regressionstests rendern die Templates aus den YAML-Dateien. Der erste GitHub-Actions-Lauf am 19.09.2026 war erfolgreich: https://github.com/Igelix1492/ha-mercedes-mitarbeiter-leasing/actions/runs/35438478708
+
+Erweiterung vom 20.09.2026: Tests für UUIDv4-IDs, gemeinsame MQTT-Geräte-ID, Topics, Zustandsübertragung und Verfügbarkeit hinzugefügt. Der Workflow prüft sie nach Veröffentlichung. Das MQTT-Package wurde nicht mit einem realen Broker installiert; die Tests ersetzen keine HA-Konfigurationsprüfung oder einen Integrationstest.

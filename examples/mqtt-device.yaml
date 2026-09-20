@@ -1,0 +1,68 @@
+# Optionales HA-Package / Optional HA package.
+# Requires the three blueprint sensors plus a configured MQTT integration/broker.
+# Adjust the three source entity IDs below if HA assigned different IDs.
+# For another car: generate new UUIDs and change the shared topic.
+mqtt:
+  sensor:
+    - name: Restkilometer
+      unique_id: "a1ea42e9-141c-47cc-9954-82498d0ec859"
+      state_topic: &leasing_topic "mercedes_leasing/1967a539-afb6-48b4-b8dd-12a4fcc2f0e5/state"
+      value_template: "{{ value_json.restkilometer | float(none) }}"
+      unit_of_measurement: km
+      availability_topic: *leasing_topic
+      availability_template: "{{ 'online' if is_number(value_json.restkilometer) else 'offline' }}"
+      expire_after: 180
+      device: &leasing_device
+        identifiers:
+          - "1967a539-afb6-48b4-b8dd-12a4fcc2f0e5"
+        name: Mercedes Mitarbeiter-Leasing
+        manufacturer: Community
+        model: Leasing Information
+    - name: Bandbreite
+      unique_id: "ebbe46cb-1cd7-491e-8792-6150b8c9926e"
+      state_topic: *leasing_topic
+      value_template: "{{ value_json.bandbreite }}"
+      availability_topic: *leasing_topic
+      availability_template: "{{ 'offline' if value_json.bandbreite in ['unknown', 'unavailable', ''] else 'online' }}"
+      expire_after: 180
+      device: *leasing_device
+    - name: Nachzahlung
+      unique_id: "d1e63e1f-7945-4c44-b697-780affa5de17"
+      state_topic: *leasing_topic
+      value_template: "{{ value_json.nachzahlung | float(none) }}"
+      unit_of_measurement: EUR
+      availability_topic: *leasing_topic
+      availability_template: "{{ 'online' if is_number(value_json.nachzahlung) else 'offline' }}"
+      expire_after: 180
+      device: *leasing_device
+
+automation:
+  - id: "b18a58bd-93f4-4d6b-b930-20b3ca4f5b48"
+    alias: Mercedes Leasing - MQTT bridge
+    mode: restart
+    triggers:
+      - trigger: homeassistant
+        event: start
+      - trigger: state
+        entity_id:
+          - &source_rest sensor.mercedes_leasing_restkilometer
+          - &source_band sensor.mercedes_leasing_bandbreite
+          - &source_payment sensor.mercedes_leasing_nachzahlung
+      - trigger: time_pattern
+        minutes: "/1"
+    variables:
+      source_rest: *source_rest
+      source_band: *source_band
+      source_payment: *source_payment
+    actions:
+      - action: mqtt.publish
+        data:
+          topic: *leasing_topic
+          qos: 1
+          retain: false
+          payload: >-
+            {{ {
+              'restkilometer': states(source_rest),
+              'bandbreite': states(source_band),
+              'nachzahlung': states(source_payment)
+            } | to_json }}

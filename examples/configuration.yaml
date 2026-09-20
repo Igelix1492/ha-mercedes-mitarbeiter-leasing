@@ -1,4 +1,6 @@
 # In einen bestehenden template:-Abschnitt als weitere Listeneinträge einfügen.
+# UUIDs gelten für genau ein Fahrzeug. Für weitere Fahrzeuge neue UUIDs erzeugen.
+# Bestehende unique_id bei Updates beibehalten (keine Migration erforderlich).
 template:
   - use_blueprint:
       path: mercedes_leasing/restkilometer.yaml
@@ -6,18 +8,18 @@ template:
         odometer: sensor.mein_auto_kilometerstand
         start_km: 0
     name: Mercedes Leasing restkilometer
-    unique_id: mercedes_leasing_restkilometer
+    unique_id: "09706e62-6527-4c8d-9648-39f42d03e1b8"
   - use_blueprint:
       path: mercedes_leasing/bandbreite.yaml
       input:
         odometer: sensor.mein_auto_kilometerstand
         start_km: 0
     name: Mercedes Leasing bandbreite
-    unique_id: mercedes_leasing_bandbreite
+    unique_id: "96644bf7-8817-4223-8275-4d4030de161b"
   - use_blueprint:
       path: mercedes_leasing/nachzahlung.yaml
       input:
         odometer: sensor.mein_auto_kilometerstand
         start_km: 0
     name: Mercedes Leasing nachzahlung
-    unique_id: mercedes_leasing_nachzahlung
+    unique_id: "f338b8be-2313-47dc-b335-5cbb935f2c73"

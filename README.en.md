@@ -60,6 +60,8 @@ Missing or invalid odometer values, or readings below the starting value, make a
 
 ## Included example tariff
 
+**Contract basis: 9,000 km.** My original configuration is based on a lease agreement for 9,000 km. The agreed mileage allowance can vary between individual contracts. The mileage bands and additional payments provided here are therefore not universal rates: check them against your own agreement and adjust them where necessary. `start_km` refers only to the odometer reading at the beginning of the lease, not the agreed mileage allowance; changing it does not adjust the tariff table.
+
 The amounts were supplied with the project's initial configuration. **The tariff date and contractual validity have not been verified.** Check your own contract before use. Amounts correspond to current distance, not a forecast for the end of the lease.
 
 | Contract distance (km) | Additional payment (EUR) |

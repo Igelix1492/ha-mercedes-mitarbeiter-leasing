@@ -64,6 +64,8 @@ Fehlende/ungültige Kilometerstände und Kilometerstände unterhalb des Startwer
 
 ## Enthaltene Beispiel-Tariftabelle
 
+**Vertragsbasis: 9.000 km.** Meine ursprüngliche Konfiguration basiert auf einem Leasingabschluss über 9.000 km. Die vereinbarte Kilometerleistung kann je nach Vertrag individuell abweichen. Die hier hinterlegten Bandgrenzen und Nachzahlungen sind deshalb keine allgemeingültigen Tarife und müssen mit dem eigenen Vertrag abgeglichen und gegebenenfalls angepasst werden. `start_km` bezeichnet ausschließlich den Kilometerstand bei Leasingbeginn, nicht die vereinbarte Kilometerleistung; eine Änderung dieses Werts passt die Tariftabelle nicht an.
+
 Die Werte stammen aus der Ausgangskonfiguration des Projekts. **Tarifstand und vertragliche Gültigkeit sind nicht verifiziert.** Vor Verwendung mit dem eigenen Vertrag abgleichen. Die Werte sind eine Zuordnung zum aktuellen Kilometerstand, keine Prognose zum Vertragsende.
 
 | Vertragskilometer | Nachzahlung (EUR) |
